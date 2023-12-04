@@ -15,22 +15,17 @@ fn main() -> io::Result<()> {
         let mut increment = 0;
         
         for i in 0..game_numbers.len() {
-            // println!("{}", game_numbers[i]);
             for j in 0..winning_numbers.len() {
-                // println!("{} {}", game_numbers[i], winning_numbers[j]);
-                if game_numbers[i] == winning_numbers[j] {
-                    //println!("{}", game_numbers[i]);
-                    //println!("yes");
+                if game_numbers[i] != "" && game_numbers[i] == winning_numbers[j] {
                     if increment == 0 {
                         increment += 1;
                     } else {
                         increment *= 2;
                     }
-                } //else { println!("no"); }
+                } 
             }
         }
         result += increment;
-        println!("{}", result);
     }
 
     println!("{}", result);
