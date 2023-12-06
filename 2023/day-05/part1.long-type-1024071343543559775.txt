@@ -1,1 +1,0 @@
-HashMap<Result<i32, ParseIntError>, Result<i32, ParseIntError>>
