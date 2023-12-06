@@ -24,10 +24,11 @@ fn main() -> io::Result<()> {
         let mut seed = convertion[1].parse::<i32>().unwrap();
         let mut soil = convertion[0].parse::<i32>().unwrap();
 
-        for i in 0..convertion[2].parse::<i32>().unwrap() {
-            seed += i;
-            soil += i;
+        for _i in 0..convertion[2].parse::<i32>().unwrap() {
             seed_to_soil.insert(seed, soil);
+            seed += 1;
+            soil += 1;
+            //println!("{} {}", seed, soil);
         }
         index += 1;
     }
@@ -38,11 +39,13 @@ fn main() -> io::Result<()> {
         let seed = seeds[i].parse::<i32>().unwrap(); 
         if seed_to_soil.contains_key(&seed) {
             soils.push(seed_to_soil[&seed]);
+            println!("check");
         } else {
             soils.push(seed);
         }
     }
-
+    
+    for i in 0..soils.len() { println!("{} {}", seeds[i], soils[i]); }
     // use hash map to get value seed to soil
     //let mut soil_to_fertilizer = HashMap::new();
     while index < map.len() {
