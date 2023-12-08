@@ -10,13 +10,15 @@ fn main() -> io::Result<()> {
     let mut max_rank = 0;
 
     for line in reader.lines() {
-        let hand: Vec<&str> = line.unwrap().split(" ").collect();
-        let rank = get_rank(hand[0]);
+        let new_line = line.unwrap();
+        let hand: Vec<&str> = new_line.split(" ").collect();
+        let rank = get_rank(hand[0].clone());
         if rank > max_rank || (rank == max_rank && compare_hands(hand[0], max_hand) > 0) {
             result += max_rank * max_bid;
-            max_hand = hand[0];
+            max_hand = hand[0].clone();
             max_rank = rank;
-            max_bid = hand[1].parse::<usize>().unwrap();
+            let temp = hand[1].clone();
+            max_bid = temp.parse::<usize>().unwrap();
         } else {
             result += rank * hand[1].parse::<usize>().unwrap();
         }
@@ -54,7 +56,7 @@ fn get_rank(hand: &str) -> usize {
 }
 
 fn pair(cards: Vec<i32>) -> usize {
-    let result = 0;
+    let mut result = 0;
     for i in 0..cards.len() - 1 {
         if cards[i] == cards[i + 1] { result += 1; }
     }
