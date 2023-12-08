@@ -8,19 +8,22 @@ fn main() -> io::Result<()> {
     let mut max_hand = "";
     let mut max_bid = 0;
     let mut max_rank = 0;
+    let mut new_line: String;
+    let mut hand: Vec<&str>;
 
     for line in reader.lines() {
-        let new_line = line.unwrap();
-        let hand: Vec<&str> = new_line.split(" ").collect();
-        let rank = get_rank(hand[0].clone());
-        if rank > max_rank || (rank == max_rank && compare_hands(hand[0], max_hand) > 0) {
+        new_line = line.unwrap();
+        let new_line2 = new_line.clone();
+        hand = new_line2.split(" ").collect();
+        let rank = get_rank(&hand[0]);
+        if rank > max_rank || (rank == max_rank && compare_hands(&hand[0], max_hand) > 0) {
             result += max_rank * max_bid;
-            max_hand = hand[0].clone();
+            max_hand = &hand[0];
             max_rank = rank;
-            let temp = hand[1].clone();
+            let temp = &hand[1];
             max_bid = temp.parse::<usize>().unwrap();
         } else {
-            result += rank * hand[1].parse::<usize>().unwrap();
+            result += rank * &hand[1].parse::<usize>().unwrap();
         }
     }
 
@@ -36,7 +39,7 @@ fn get_rank(hand: &str) -> usize {
     }
 
     cards.sort();
-    let mut rank: usize = 0;
+    let rank: usize;
     
     // Five of a kind
     if cards[0] == cards[4] { rank = 7 as usize; }  
@@ -77,7 +80,7 @@ fn compare_hands(hand1: &str, hand2: &str) -> i32 {
 }
 
 fn get_card_value(card: char) -> i32 {
-    let mut value = 0;
+    let value: i32;
     match card {
         '2' => value = 2,
         '3' => value = 3,
