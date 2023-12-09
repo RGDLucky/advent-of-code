@@ -5,23 +5,16 @@ fn main() -> io::Result<()> {
     let file = File::open("input1.txt")?;
     let reader = BufReader::new(file);
     let mut result = 0;
-    //let mut max_hand = "";
-    //let mut max_bid = 0;
-    //let mut max_rank = 0;
-    //let mut new_line: String;
     let mut hand_and_bid: Vec<Vec<&str>> = vec![];
     let mut contents: Vec<String> = vec![];
-    //
-    //Idea: put all lines into a vecvec then iterate through and do what I did below
+
     for line in reader.lines() { contents.push(line.unwrap()); }
     for i in 0..contents.len() { 
         hand_and_bid.push(contents[i].split(" ").collect());
-        for j in hand_and_bid.len() - 1..0 {
+        for j in (1..hand_and_bid.len()).rev() {
             let hand = hand_and_bid[j][0];
             let rank = get_rank(&hand_and_bid[j][0]);
             if rank < get_rank(&hand_and_bid[j-1][0]) || (rank == get_rank(&hand_and_bid[j-1][0]) && compare_hands(hand, hand_and_bid[j-1][0]) < 0) {
-                // exchange them
-                println!("{} {}", hand_and_bid[j][0], hand_and_bid[j - 1][0]);
                 let temp: Vec<&str> = hand_and_bid[j].clone();
                 hand_and_bid[j] = hand_and_bid[j - 1].clone();
                 hand_and_bid[j-1] = temp.clone();
@@ -29,24 +22,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    for i in 0..hand_and_bid.len() { 
-        result += (i + 1) * hand_and_bid[i][1].parse::<usize>().unwrap(); 
-        //println!("{} {}", hand_and_bid[i][1], hand_and_bid[i][0]);
-    }
-    /*
-    for i in 0..hand_and_bid.len() {
-        let rank = get_rank(&hand_and_bid[i][0]);
-        let bid = hand_and_bid[i][1].parse::<usize>().unwrap();
-        let hand = hand_and_bid[i][0];
-        if rank > max_rank || (rank == max_rank && compare_hands(hand, max_hand) > 0) {
-            result += max_rank * max_bid;
-            max_hand = hand;
-            max_rank = rank;
-            max_bid = bid;
-        } else {
-            result += rank * bid;
-        }
-    } */
+    for i in 0..hand_and_bid.len() { result += (i + 1) * hand_and_bid[i][1].parse::<usize>().unwrap(); }
 
     println!("{}", result);
 
@@ -76,7 +52,7 @@ fn get_rank(hand: &str) -> usize {
     else if pair(cards.clone()) == 1 { rank = 2 as usize; }
     // high card
     else { rank = 1 as usize; }
-    println!("{}", rank);
+    //println!("{}", rank);
     return rank;
 }
 
@@ -88,7 +64,6 @@ fn pair(cards: Vec<i32>) -> usize {
     return result;
 }
 
-// return -1 if hand1 < hand2 0 if = and 1 if hand1 > hand2
 fn compare_hands(hand1: &str, hand2: &str) -> i32 {
     let hand1_vec: Vec<char> = hand1.chars().collect();
     let hand2_vec: Vec<char> = hand2.chars().collect();
