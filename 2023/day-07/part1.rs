@@ -5,17 +5,35 @@ fn main() -> io::Result<()> {
     let file = File::open("input1.txt")?;
     let reader = BufReader::new(file);
     let mut result = 0;
-    let mut max_hand = "";
-    let mut max_bid = 0;
-    let mut max_rank = 0;
+    //let mut max_hand = "";
+    //let mut max_bid = 0;
+    //let mut max_rank = 0;
     //let mut new_line: String;
     let mut hand_and_bid: Vec<Vec<&str>> = vec![];
     let mut contents: Vec<String> = vec![];
     //
     //Idea: put all lines into a vecvec then iterate through and do what I did below
     for line in reader.lines() { contents.push(line.unwrap()); }
-    for i in 0..contents.len() { hand_and_bid.push(contents[i].split(" ").collect()); }
+    for i in 0..contents.len() { 
+        hand_and_bid.push(contents[i].split(" ").collect());
+        for j in hand_and_bid.len() - 1..0 {
+            let hand = hand_and_bid[j][0];
+            let rank = get_rank(&hand_and_bid[j][0]);
+            if rank < get_rank(&hand_and_bid[j-1][0]) || (rank == get_rank(&hand_and_bid[j-1][0]) && compare_hands(hand, hand_and_bid[j-1][0]) < 0) {
+                // exchange them
+                println!("{} {}", hand_and_bid[j][0], hand_and_bid[j - 1][0]);
+                let temp: Vec<&str> = hand_and_bid[j].clone();
+                hand_and_bid[j] = hand_and_bid[j - 1].clone();
+                hand_and_bid[j-1] = temp.clone();
+            } 
+        }
+    }
 
+    for i in 0..hand_and_bid.len() { 
+        result += (i + 1) * hand_and_bid[i][1].parse::<usize>().unwrap(); 
+        //println!("{} {}", hand_and_bid[i][1], hand_and_bid[i][0]);
+    }
+    /*
     for i in 0..hand_and_bid.len() {
         let rank = get_rank(&hand_and_bid[i][0]);
         let bid = hand_and_bid[i][1].parse::<usize>().unwrap();
@@ -28,7 +46,7 @@ fn main() -> io::Result<()> {
         } else {
             result += rank * bid;
         }
-    }
+    } */
 
     println!("{}", result);
 
