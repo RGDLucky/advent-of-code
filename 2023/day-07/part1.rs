@@ -8,22 +8,25 @@ fn main() -> io::Result<()> {
     let mut max_hand = "";
     let mut max_bid = 0;
     let mut max_rank = 0;
-    let mut new_line: String;
-    let mut hand: Vec<&str>;
+    //let mut new_line: String;
+    let mut hand_and_bid: Vec<Vec<&str>> = vec![];
+    let mut contents: Vec<String> = vec![];
+    //
+    //Idea: put all lines into a vecvec then iterate through and do what I did below
+    for line in reader.lines() { contents.push(line.unwrap()); }
+    for i in 0..contents.len() { hand_and_bid.push(contents[i].split(" ").collect()); }
 
-    for line in reader.lines() {
-        new_line = line.unwrap();
-        let new_line2 = new_line.clone();
-        hand = new_line2.split(" ").collect();
-        let rank = get_rank(&hand[0]);
-        if rank > max_rank || (rank == max_rank && compare_hands(&hand[0], max_hand) > 0) {
+    for i in 0..hand_and_bid.len() {
+        let rank = get_rank(&hand_and_bid[i][0]);
+        let bid = hand_and_bid[i][1].parse::<usize>().unwrap();
+        let hand = hand_and_bid[i][0];
+        if rank > max_rank || (rank == max_rank && compare_hands(hand, max_hand) > 0) {
             result += max_rank * max_bid;
-            max_hand = &hand[0];
+            max_hand = hand;
             max_rank = rank;
-            let temp = &hand[1];
-            max_bid = temp.parse::<usize>().unwrap();
+            max_bid = bid;
         } else {
-            result += rank * &hand[1].parse::<usize>().unwrap();
+            result += rank * bid;
         }
     }
 
@@ -55,6 +58,7 @@ fn get_rank(hand: &str) -> usize {
     else if pair(cards.clone()) == 1 { rank = 2 as usize; }
     // high card
     else { rank = 1 as usize; }
+    println!("{}", rank);
     return rank;
 }
 
