@@ -75,6 +75,14 @@ struct dfs {
 }
 
 impl dfs {
+    enum Direction {
+        Up,
+        Down,
+        Right,
+        Left,
+        DeadEnd,
+    }
+
     fn new(new_field: Vec<Vec<char>>, new_sx: usize, new_sy: usize) -> Self {
         Self {
             field: new_field
@@ -83,11 +91,53 @@ impl dfs {
         }
     }
 
+    // kick things off by checking each direction starting from S then calls searchHelper for each
+    // of them
     fn search() -> usize {
         
     }
 
-    fn searchHelper() -> usize {
+    // Recursion that keeps going through path until it hits S or an invalid pipe
+    // also keeps a counter
+    fn searchHelper(x: useize, y: usize, direction: Direction) -> usize {
 
+    }
+
+    // if previous pipe went up check if the next one is valid and return its direction or say its
+    // a dead end
+    fn checkUp(pipe: char) -> Direction {
+        match pipe {
+            '|' => return Direction::Up,
+            '7' => return Direction::Left,
+            'F' => return Direction::Right,
+            _ => return Direction::DeadEnd,
+        }
+    }
+    
+    fn checkDown(pipe: char) -> Direction {
+        match pipe {
+            '|' => return Direction::Down,
+            'L' => return Direction::Right,
+            'J' => return Direction::Left,
+            _ => return Direction::DeadEnd,
+        }
+    }
+
+    fn checkRight(pipe: char) -> Direction {
+        match pipe {
+            '-' => return Direction::Right,
+            '7' => return Direction::Down,
+            'J' => return Direction::Up,
+            _ => return Direction::DeadEnd,
+        }
+    }
+
+    fn checkLeft(pipe: char) -> Direction {
+        match pipe {
+            '-' => return Direction::Left,
+            'F' => return Direction::Down,
+            'L' => return Direction::Up,
+            _ => return Direction::DeadEnd,
+        }
     }
 }
