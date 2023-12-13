@@ -37,7 +37,7 @@ fn main() -> io::Result<()> {
         field.push(new_vec);
         line_index += 1;
     }
-
+    /*
     // BFS to find path
     let level = 0;
     let queue: Vec<Vec<usize>> = vec![];
@@ -58,9 +58,11 @@ fn main() -> io::Result<()> {
         level += 1;
 
     }
+*/
+    let dfs = DFS::new(field, sx, sy);
+    result = dfs.search();
 
-
-    println!("S at: {} {}", sx, sy);
+    // println!("S at: {} {}", sx, sy);
     //for line in field { println!("{}", line ); }
 
     println!("{}", result);
@@ -68,13 +70,13 @@ fn main() -> io::Result<()> {
     Ok(())
 }    
 
-struct dfs {
+struct DFS {
     feild: Vec<Vec<char>>,
-    sx: usize,
-    sy: usize,
+    sr: usize,
+    sc: usize,
 }
 
-impl dfs {
+impl DFS {
     enum Direction {
         Up,
         Down,
@@ -83,24 +85,40 @@ impl dfs {
         DeadEnd,
     }
 
-    fn new(new_field: Vec<Vec<char>>, new_sx: usize, new_sy: usize) -> Self {
+    fn new(new_field: Vec<Vec<char>>, new_sr: usize, new_sc: usize) -> Self {
         Self {
             field: new_field
-            sx: new_sx,
-            sy: new_sy,
+            sr: new_sr,
+            sc: new_sc,
         }
     }
 
     // kick things off by checking each direction starting from S then calls searchHelper for each
     // of them
-    fn search() -> usize {
+    fn search(&self) -> usize {
+        let up = checkUp(field[sr+1][sc]);
+        let down = checkDown(field[sr - 1][sc]);
+        let right = checkDown(field[sr][sc + 1]);
+        let left = checkLeft(field[sr][sc - 1]);
         
+        return searchHelper(sr + 1, sc, up, 1) + searchHelper(sr - 1, sc, down, 1) + searchHelper(sr, sc + 1, right, 1) + searchHelper(sr, sc - 1, left, 1);
     }
 
     // Recursion that keeps going through path until it hits S or an invalid pipe
     // also keeps a counter
-    fn searchHelper(x: useize, y: usize, direction: Direction) -> usize {
-
+    fn searchHelper(row: usize, col: usize, direction: Direction, count: usize) -> usize {
+        if field[row][col] == 'S' { return count; }
+        if direction == Direction::DeadEnd { return 0; }
+        let new_row = row;
+        let new_col = col;
+        let new_direction;
+        match direction {
+            Direction::Up => { new_row = row + 1; new_direction = checkUp(field[new_row][new_col]); },
+            Direction::Down => { new_row = row - 1; new_direction = checkDown(field[new_row][new_col]); },
+            Direction::Right => { new_col = col + 1; new_direction = checkRight(field[new_row][new_col]); },
+            Direction::Left => { new_col = col - 1; new_direction = checkLeft(field[new_row][new_col]); },
+        }
+        return searchHelper(new_row, new_col, new_direction, count + 1); 
     }
 
     // if previous pipe went up check if the next one is valid and return its direction or say its
