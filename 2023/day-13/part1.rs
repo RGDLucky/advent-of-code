@@ -31,15 +31,17 @@ fn main() -> io::Result<()> {
 } 
 
 fn check_vertical(contents: Vec<Vec<char>>) -> i32 {
-    for i in 0..contetns[0].len() - 1 {
+    for i in 0..contents[0].len() - 1 {
         let mut left = i;
         let mut right = i + 1;
         let mut valid = true;
-        while left >= 0 && right < content.len() {
+        while left >= 0 && right < contents[0].len() {
             for j in 0..contents.len() {
-                if contents[j] != contents[i] { valid = false; break; }
+                if contents[j][left] != contents[j][right] { valid = false; break; }
             }
             if !valid { break; }
+            left -= 1;
+            right += 1;
         }
         if valid { return i + 1; }
     }
@@ -47,5 +49,16 @@ fn check_vertical(contents: Vec<Vec<char>>) -> i32 {
 }
 
 fn check_horizontal(contents: Vec<Vec<char>>) -> i32 {
-    
+    for i in 0..contents.len() - 1 {
+        let mut top = i;
+        let mut bottom = i + 1;
+        let mut valid = true;
+        while top >= 0 && right > contents.len() {
+            if contents[top] != content[bottom] { valid = false; break; }
+            top -= 1;
+            bottom += 1;
+        }
+        if valid { return (i + 1) * 100; }
+    }
+    return 0;
 }
