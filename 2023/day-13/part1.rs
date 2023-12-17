@@ -1,9 +1,6 @@
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
-// Ideas/Notes: get all lines into a an array, then check for vertical and if not check for
-// horizontal reflection
-
 fn main() -> io::Result<()> {
     let file = File::open("input1.txt")?;
     let reader = BufReader::new(file);
@@ -17,11 +14,11 @@ fn main() -> io::Result<()> {
     let mut index = 0;
     while index < contents.len() {
         let mut grid: Vec<Vec<char>> = vec![];
-        while contents[index] != "" {
+        while index < contents.len() && contents[index] != "" {
             grid.push(contents[index].chars().collect());
             index += 1;
         }
-        result += check_vertical(grid()) + check_horizontal(grid.clone());
+        result += check_vertical(grid.clone()) + check_horizontal(grid.clone());
         index += 1;
     }
 
@@ -30,35 +27,39 @@ fn main() -> io::Result<()> {
     Ok(())
 } 
 
-fn check_vertical(contents: Vec<Vec<char>>) -> i32 {
+fn check_vertical(contents: Vec<Vec<char>>) -> usize {
+    let mut result = 0;
     for i in 0..contents[0].len() - 1 {
         let mut left = i;
         let mut right = i + 1;
         let mut valid = true;
-        while left >= 0 && right < contents[0].len() {
+        while right < contents[0].len() {
             for j in 0..contents.len() {
                 if contents[j][left] != contents[j][right] { valid = false; break; }
             }
             if !valid { break; }
+            if left == 0 { break; }
             left -= 1;
             right += 1;
         }
-        if valid { return i + 1; }
+        if valid { result = i + 1; }
     }
-    return 0;
+    return result;
 }
 
-fn check_horizontal(contents: Vec<Vec<char>>) -> i32 {
+fn check_horizontal(contents: Vec<Vec<char>>) -> usize {
+    let mut result = 0;
     for i in 0..contents.len() - 1 {
         let mut top = i;
         let mut bottom = i + 1;
         let mut valid = true;
-        while top >= 0 && right > contents.len() {
-            if contents[top] != content[bottom] { valid = false; break; }
+        while bottom < contents.len() {
+            if contents[top] != contents[bottom] { valid = false; break; }
+            if top == 0 { break; }
             top -= 1;
             bottom += 1;
         }
-        if valid { return (i + 1) * 100; }
+        if valid { result = (i + 1) * 100; }
     }
-    return 0;
+    return result;
 }
