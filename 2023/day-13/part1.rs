@@ -31,7 +31,19 @@ fn main() -> io::Result<()> {
 } 
 
 fn check_vertical(contents: Vec<Vec<char>>) -> i32 {
-    
+    for i in 0..contetns[0].len() - 1 {
+        let mut left = i;
+        let mut right = i + 1;
+        let mut valid = true;
+        while left >= 0 && right < content.len() {
+            for j in 0..contents.len() {
+                if contents[j] != contents[i] { valid = false; break; }
+            }
+            if !valid { break; }
+        }
+        if valid { return i + 1; }
+    }
+    return 0;
 }
 
 fn check_horizontal(contents: Vec<Vec<char>>) -> i32 {
