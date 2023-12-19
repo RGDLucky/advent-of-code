@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
+use std::convert::TryInto;
 
 fn main() -> io::Result<()> {
     let file = File::open("input1.txt")?;
@@ -12,7 +13,7 @@ fn main() -> io::Result<()> {
     }
     
     let mut traversal = Traversal::new(contents);
-    traversal.traverse(0, 0, Direction::Left);
+    traversal.traverse(0, 0, Direction::Right);
     println!("{}", traversal.get_len());
 
     Ok(())
@@ -27,27 +28,32 @@ enum Direction {
 
 // new idea make a struct and make traverse a method so you can store visited nodes somewhere
 //
-struct Traversal<'a> {
+struct Traversal {
     contents: Vec<Vec<char>>,
-    visited: Vec<&'a str>,
+    visited: Vec<Vec<usize>>,
 }
 
-impl<'a> Traversal<'a> {
+impl Traversal {
     fn new(new_contents: Vec<Vec<char>>) -> Self {
-        let new_visited: Vec<& str> = vec![];
+        let new_visited: Vec<Vec<usize>> = vec![];
         Traversal {
             contents: new_contents,
             visited: new_visited,
         }
     }
 
-    fn traverse(&mut self, row: usize, col: usize, direction: Direction) {
-        if row < 0 || row >= self.contents.len() || col < 0 || col >= self.contents[row].len() { return; }
-        let value::<'a> = (row.to_string() + "," + &col.to_string()).as_str();
-        if !self.visited.contains(&value) { self.visited.push(value); }
+    fn traverse(&mut self, row: i32, col: i32, direction: Direction) {
+        println!("{} {}", row, col);
+        if row < 0 || col < 0 { return; }
+        let temp_row: usize = row.try_into().unwrap();
+        let temp_col: usize = col.try_into().unwrap();
+        if row < 0 || row >= self.contents.len().try_into().unwrap() || col < 0 || temp_col >= self.contents[0].len() { return; }
+        // let value: &'a str = (row.to_string() + "," + &col.to_string()).as_str();
+        if !self.visited.contains(&vec![row.try_into().unwrap(), col.try_into().unwrap()]) {  self.visited.push(vec![row.try_into().unwrap(), col.try_into().unwrap()]); }
         
-        match (direction, self.contents[row][col]) {
-            (Direction::Up, '|' | '.') => self.traverse(row - 1, col, Direction::Up),
+        match (direction, self.contents[temp_row][temp_col]) {
+            (Direction::Up, '|') => self.traverse(row - 1, col, Direction::Up),
+            (Direction::Up, '.') => self.traverse(row - 1, col, Direction::Up),
             (Direction::Up, '/') => self.traverse(row, col + 1, Direction::Right),
             (Direction::Up, '\\') => self.traverse(row, col - 1, Direction::Left),
             (Direction::Up, '-') => {
@@ -55,7 +61,8 @@ impl<'a> Traversal<'a> {
                 self.traverse(row, col - 1, Direction::Left);
             },
         
-            (Direction::Down, '|' | '.') => self.traverse(row + 1, col, Direction::Down),
+            (Direction::Down, '|') => self.traverse(row + 1, col, Direction::Down),
+            (Direction::Down, '.') => self.traverse(row + 1, col, Direction::Down),
             (Direction::Down, '/') => self.traverse(row, col - 1, Direction::Left),
             (Direction::Down, '\\') => self.traverse(row, col + 1, Direction::Right),
             (Direction::Down, '-') => {
@@ -63,7 +70,8 @@ impl<'a> Traversal<'a> {
                 self.traverse(row, col - 1, Direction::Left);
             },
 
-            (Direction::Right, '-' | '.') => self.traverse(row, col + 1, Direction::Right),
+            (Direction::Right, '-') => self.traverse(row, col + 1, Direction::Right),
+            (Direction::Right, '.') => self.traverse(row, col + 1, Direction::Right),
             (Direction::Right, '/') => self.traverse(row - 1, col, Direction::Up),
             (Direction::Right, '\\') => self.traverse(row + 1, col, Direction::Down),
             (Direction::Right, '|') => {
@@ -71,7 +79,8 @@ impl<'a> Traversal<'a> {
                 self.traverse(row - 1, col, Direction::Down);
             },
 
-            (Direction::Left, '-' | '.') => self.traverse(row, col - 1, Direction::Left),
+            (Direction::Left, '.') => self.traverse(row, col - 1, Direction::Left),
+            (Direction::Left, '-') => self.traverse(row, col - 1, Direction::Left),
             (Direction::Left, '/') => self.traverse(row + 1, col, Direction::Down),
             (Direction::Left, '\\') => self.traverse(row - 1, col, Direction::Up),
             (Direction::Left, '|') => {
@@ -84,6 +93,9 @@ impl<'a> Traversal<'a> {
     }
 
     fn get_len(&self) -> usize {
+        for i in 0..self.visited.len() {
+            println!("row: {} col: {}", self.visited[i][0], self.visited[i][1]);
+        }
         return self.visited.len();
     }
 }
