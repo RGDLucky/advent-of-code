@@ -26,8 +26,6 @@ enum Direction {
     Left,
 }
 
-// Find a way to detect cycles
-//
 struct Traversal {
     contents: Vec<Vec<char>>,
     visited: Vec<Vec<usize>>,
@@ -46,19 +44,16 @@ impl Traversal {
     }
 
     fn traverse(&mut self, row: i32, col: i32, direction: Direction) {
-        //println!("{} {}", row, col);
         if row < 0 || col < 0 { return; }
         let temp_row: usize = row.try_into().unwrap();
         let temp_col: usize = col.try_into().unwrap();
         if row < 0 || row >= self.contents.len().try_into().unwrap() || col < 0 || temp_col >= self.contents[0].len() { return; }
-        // let value: &'a str = (row.to_string() + "," + &col.to_string()).as_str();
         let dir;
         match direction {
             Direction::Up => dir = 1,
             Direction::Down => dir = 2,
             Direction::Right => dir = 3,
             Direction::Left => dir = 4,
-            //_ => panic!(),
         }
         if self.cycle.contains(&vec![temp_row, temp_col, dir]) { return; }
         self.cycle.push(vec![temp_row, temp_col, dir]);
@@ -106,58 +101,7 @@ impl Traversal {
     }
 
     fn get_len(&self) -> usize {
-        //for i in 0..self.visited.len() {
-            //println!("row: {} col: {}", self.visited[i][0], self.visited[i][1]);
-        //}
         return self.visited.len();
     }
 }
-/*
-fn traverse(row: usize, col: usize, direction: Direction, contents: Vec<Vec<char>>) -> Vec<&'static str> {
-    let mut visited: Vec<&str> = vec![];
-    if row < 0 || row >= contents.len() || col < 0 || col >= contents[row].len() { return visited.clone(); }
-    // diferent values: . / \ | -
-    match (direction, contents[row][col]) {
-        (Direction::Up, '|' | '.') =>  visited = traverse(row - 1, col, Direction::Up, contents.clone()),
-        (Direction::Up, '/') => visited = traverse(row, col + 1, Direction::Right, contents.clone()),
-        (Direction::Up, '\\') => visited = traverse(row, col - 1, Direction::Left, contents.clone()),
-        (Direction::Up, '-') => {
-            visited = traverse(row, col + 1, Direction::Right, contents.clone());
-            let temp: Vec<&str> = traverse(row, col - 1, Direction::Left, contents.clone());
-            for i in 0..temp.len() { if !visited.contains(&temp[i]) { visited.push(temp[i]) }; }
-        },
-        
-        (Direction::Down, '|' | '.') =>  visited = traverse(row + 1, col, Direction::Down, contents.clone()),
-        (Direction::Down, '/') => visited = traverse(row, col - 1, Direction::Left, contents.clone()),
-        (Direction::Down, '\\') => visited = traverse(row, col + 1, Direction::Right, contents.clone()),
-        (Direction::Down, '-') => {
-            visited = traverse(row, col + 1, Direction::Right, contents.clone());
-            let temp: Vec<&str> = traverse(row, col - 1, Direction::Left, contents.clone());
-            for i in 0..temp.len() { if !visited.contains(&temp[i]) { visited.push(temp[i]) }; }
-        },
 
-        (Direction::Right, '-' | '.') =>  visited = traverse(row, col + 1, Direction::Right, contents.clone()),
-        (Direction::Right, '/') => visited = traverse(row - 1, col, Direction::Up, contents.clone()),
-        (Direction::Right, '\\') => visited = traverse(row + 1, col, Direction::Down, contents.clone()),
-        (Direction::Right, '|') => {
-            visited = traverse(row + 1, col, Direction::Up, contents.clone());
-            let temp: Vec<&str> = traverse(row - 1, col, Direction::Down, contents.clone());
-            for i in 0..temp.len() { if !visited.contains(&temp[i]) { visited.push(temp[i]) }; }
-        },
-
-        (Direction::Left, '-' | '.') =>  visited = traverse(row, col - 1, Direction::Left, contents.clone()),
-        (Direction::Left, '/') => visited = traverse(row + 1, col, Direction::Down, contents.clone()),
-        (Direction::Left, '\\') => visited = traverse(row - 1, col, Direction::Up, contents.clone()),
-        (Direction::Left, '|') => {
-            visited = traverse(row + 1, col, Direction::Up, contents.clone());
-            let temp: Vec<&str> = traverse(row - 1, col, Direction::Down, contents.clone());
-            for i in 0..temp.len() { if !visited.contains(&temp[i]) { visited.push(temp[i]) }; }
-        },
-        
-        _ => panic!(),
-    }
-    let value = row.to_string() + "," + &col.to_string();
-    let new_value = value.as_str();
-    visited.push(new_value.clone());
-    return visited.clone();
-} */
